@@ -18,14 +18,14 @@ module.exports = (robot) ->
     repo = "#{process.env.HUBOT_GITHUB_USER}/#{repo}" unless ~repo.indexOf("/")
     filter_reg_exp = new RegExp(msg.match[4], "i") if msg.match[3]
 
-    msg.http("https://api.github.com/repos/#{repo}/pulls")
+    msg.http("https://api.github.com/repos/fellowshiptech/#{repo}/pulls")
       .headers(Authorization: "token #{oauth_token}", Accept: "application/json")
       .query(state: "open")
       .get() (err, res, body) ->
         pulls = JSON.parse(body)
 
         if err || res.statusCode != 200
-          msg.send "GitHub says: #{pulls.message}"
+          msg.send "GitHub says: #{res.statusCode} : #{pulls.message}"
           return
 
         if pulls.length == 0
