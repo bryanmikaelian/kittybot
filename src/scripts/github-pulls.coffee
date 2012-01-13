@@ -15,7 +15,7 @@ module.exports = (robot) ->
   robot.respond /show\s+(me\s+)?(.*)\s+pulls(\s+with\s+)?(.*)?/i, (msg)->
     oauth_token = process.env.HUBOT_GITHUB_TOKEN
     repo = msg.match[2].toLowerCase()
-    repo = "#{process.env.HUBOT_GITHUB_USER}/#{repo}" unless ~repo.indexOf("/")
+    # repo = "#{process.env.HUBOT_GITHUB_USER}/#{repo}" unless ~repo.indexOf("/")
     filter_reg_exp = new RegExp(msg.match[4], "i") if msg.match[3]
 
     msg.http("https://api.github.com/repos/fellowshiptech/#{repo}/pulls")
