@@ -1,8 +1,20 @@
-# Mitch Hedburg
+# Allows Hubot to find an awesome Mitch Hedburg quote
 #
-# where is mitch - This spits out one of the many awesome Mitch Hedburg quotes
+# get mitch - This spits out one of the many awesome Mitch Hedburg quotes from wikiquote.org with filter
+# get dirty mitch - This spits out one of the many awesome Mitch Hedburg quotes from wikiquote.org without potty mouth filter
 
-quotes = [
+# REQUIRED MODULES
+# sudo npm install htmlparser
+# sudo npm install soupselect
+# sudo npm install jsdom
+# sudo npm install underscore
+
+Select     	= require("soupselect").select
+HtmlParser 	= require "htmlparser"
+JsDom 		= require "jsdom"
+_          	= require("underscore")
+
+StaticQuotes = [
 	"A severed foot is the ultimate stocking stuffer.",
     "I hope the next time I move I get a real easy phone number, something that's real easy to remember. Something like two two two two two two two. I would say \"Sweet.\" And then people would say, \"Mitch, how do I get a hold of you?\" I'd say, \"Just press two for a while and when I answer, you will know you have pressed two enough.",
     "My friend asked me if I wanted a frozen banana, I said \"No, but I want a regular banana later, so ... yeah\".",
@@ -25,5 +37,55 @@ quotes = [
     "The Kit-Kat candy bar has the name 'Kit-Kat' imprinted into the chocolate. That robs you of chocolate!"]
 
 module.exports = (robot) ->
-	robot.respond /where is mitch\s*(.*)?$/i, (msg) ->
-		msg.send quotes[Math.floor(Math.random() * quotes.length)]
+	
+	robot.respond /get( dirty)? mitch$/i, (msg) ->
+		msg
+			.http("http://en.wikiquote.org/wiki/Mitch_Hedberg")
+			.header("User-Agent: Mitchbot for Hubot (+https://github.com/github/hubot-scripts)")
+			.get() (err, res, body) ->
+				quotes = parse_html(body, "li") 
+				quote = get_quote msg, quotes
+			
+get_quote = (msg, quotes) -> 
+	
+	pottyParm = msg.match[1].replace /^\s+|\s+$/g, "" if msg.match[1] != undefined
+
+	nodeChildren = _.flatten childern_of_type(quotes[Math.floor(Math.random() * quotes.length)])
+	quote = (textNode.data for textNode in nodeChildren).join ''
+	
+	if pottyParm == "dirty"
+		msg.send quote
+	else
+		keep_it_clean msg, quote, (body, err) -> 
+			msg.send staticquotes[Math.floor(Math.random() * staticquotes.length)] if err 
+			#because potty word just sounds funny
+			msg.send body.getElementsByTagName("CleanText")[0].firstChild.nodeValue.replace /(Explicit)+/g, "potty word"
+
+# Helpers		
+parse_html = (html, selector) ->
+	handler = new HtmlParser.DefaultHandler((() ->), ignoreWhitespace: true)
+	parser  = new HtmlParser.Parser handler
+	
+	parser.parseComplete html
+	Select handler.dom, selector
+	
+childern_of_type = (root) ->
+	return [root] if root?.type is "text"
+
+	if root?.children?.length > 0
+		return (childern_of_type(child) for child in root.children)
+
+get_dom = (xml) ->
+	body = JsDom.jsdom(xml)
+	throw Error("No XML data returned.") if body.getElementsByTagName("FilterReturn")[0].childNodes.length == 0
+	return body
+	
+keep_it_clean = (msg, quote, cb) -> 
+	msg.http("http://wsf.cdyne.com/ProfanityWS/Profanity.asmx/SimpleProfanityFilter")
+		.query(Text: quote)
+		.get() (err, res, body) -> 
+			try
+				body = get_dom body
+			catch err
+				err = "Could not clean potty words."
+			cb(body, err)
