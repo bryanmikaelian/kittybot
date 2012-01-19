@@ -5,4 +5,14 @@
 #
 module.exports = (robot) ->
   robot.hear /sifters/, (msg)->
-    # TODO: Add sifter logic here
+    token = process.env.HUBOT_SIFTER_TOKEN
+    company = process.env.HUBOT_SIFTER_COMPANY
+    projects = process.env.HUBOT_SIFTER_PROJECTS
+  msg
+     .http("https://#{company}.sifterapp.com/api/projects/")
+      .header('X-Sifter-Token', token)
+      .header(Accept: 'application/json')
+      .get() (err, res, body) ->
+        issues = JSON.parse(body)
+        console.log(issues)
+
