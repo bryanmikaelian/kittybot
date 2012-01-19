@@ -10,6 +10,9 @@ module.exports = (robot) ->
   info   = Url.parse process.env.REDISTOGO_URL || 'redis://localhost:6379'
   client = Redis.createClient(info.port, info.hostname)
 
+  if info.auth
+    client.auth info.auth.split(":")[1]
+
   robot.respond /(how many rimshots)+\?*/i, (msg) ->
     client.hget "counts", "rimshots", (err, reply) ->
       if err
