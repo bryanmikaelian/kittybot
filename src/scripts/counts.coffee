@@ -1,6 +1,6 @@
-# Gets the number of rimshots played
+# Gets the number of sounds played
 #
-# hubot how many rimshots? - gets the number of rimshots played
+# hubot how many <query>? - gets the number of sounds played, based on the query
 #
 
 Url   = require "url"
@@ -22,9 +22,9 @@ module.exports = (robot) ->
       else
         count = reply
       msg.send "Total rimshots played: #{count}"
-  
+
   robot.hear /(plays a rimshot)/i, (msg) ->
     client.hincrby "counts", "rimshots", 1, (err, reply) ->
       if err
         throw err
-        
+
