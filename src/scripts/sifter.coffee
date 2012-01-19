@@ -8,9 +8,3 @@ module.exports = (robot) ->
     token = process.env.HUBOT_SIFTER_TOKEN
     company = process.env.HUBOT_SIFTER_COMPANY
     project = process.env.HUBOT_SIFTER_PROJECT
-    msg
-     .http("https://#{company}.sifterapp.com/api/projects/#{project}/issues")
-      .header('X-Sifter-Token', token)
-      .header(Accept: 'application/json')
-      .get() (err, res, body) ->
-
