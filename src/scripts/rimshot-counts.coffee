@@ -12,7 +12,9 @@ module.exports = (robot) ->
 
   robot.respond /(how many rimshots)+\?*/i, (msg) ->
     client.hget "counts", "rimshots", (err, reply) ->
-      if reply is null 
+      if err
+        throw err
+      else if reply is null 
         count = 0
       else
         count = reply
@@ -20,4 +22,6 @@ module.exports = (robot) ->
   
   robot.hear /(plays a rimshot)/i, (msg) ->
     client.hincrby "counts", "rimshots", 1, (err, reply) ->
-      console.log(err)
+      if err
+        throw err
+        
