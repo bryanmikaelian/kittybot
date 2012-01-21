@@ -23,7 +23,7 @@ module.exports = (robot) ->
         count = reply
       msg.send "Total rimshots played: #{count}"
 
-  robot.hear /(plays a rimshot)/i, (msg) ->
+  robot.hear /rimshot/i, (msg) ->
     client.hincrby "counts", "rimshots", 1, (err, reply) ->
       if err
         throw err
