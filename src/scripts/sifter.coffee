@@ -9,14 +9,14 @@ company = process.env.HUBOT_SIFTER_COMPANY
 
 module.exports = (robot) ->
   robot.respond /(give me a )*(sift(e|a)r report)+/i, (msg)->
-
+    msg.send "Generating a report for open issues per project..."
     msg.http("https://#{company}.sifterapp.com/api/projects/")
       .header('X-Sifter-Token', token)
       .header('Accept', 'application/json')
       .header('User-Agent', 'Active Faith Hubot')
       .get() (err, res, body) ->
         projects = JSON.parse(body).projects
-        msg.send "Generating a report for open issues per project..."
+        
         for project in projects
           do(project) ->
             @project = new Project(project, msg)
