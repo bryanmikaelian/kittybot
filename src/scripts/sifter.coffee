@@ -1,15 +1,14 @@
 # Sifter API integration
 #
-# hubot sifter report - Returns a summary of the open sifter tickets based on the projects.  Regex used so that people can say "what are the open sifters?"
+# hubot give me a sifter report- Returns a summary of the open sifter tickets based on the projects.  Regex used so that people can say "give me a sifters report"
 #
 #
 #
-token = process.env.HUBOT_SIFTER_TOKEN || 'cf5b2db69e7ec3019736f299e87f4a60' 
-company = process.env.HUBOT_SIFTER_COMPANY || "activefaith"
+token = process.env.HUBOT_SIFTER_TOKEN 
+company = process.env.HUBOT_SIFTER_COMPANY
 
 module.exports = (robot) ->
-  robot.respond /sifters/i, (msg)->
-
+  robot.respond /(give me a )*(sift(e|a)r report)+/i, (msg)->
 
     msg.http("https://#{company}.sifterapp.com/api/projects/")
       .header('X-Sifter-Token', token)
@@ -19,35 +18,34 @@ module.exports = (robot) ->
         projects = JSON.parse(body).projects
         msg.send "Generating a report for open issues per project..."
         for project in projects
-          @project = new Project(project)
-          @project.get_number_of_issues(msg)
+          do(project) ->
+            @project = new Project(project, msg)
+            @project.get_total_issues(msg)
+
+
 
 class Project 
-  constructor: (project) ->
+  constructor: (project, msg) ->
     @name = project.name
-    @api_issues_url = project.api_issues_url 
-    @issues = []   
+    @api_issues_url = project.api_issues_url + "?s=1-2-3"
 
-  get_number_of_issues: (msg) ->
-    msg.http(@api_issues_url + "?s=1&2&3")
+  get_total_issues: (msg) ->
+    msg.http("#{@api_issues_url}")
       .header('X-Sifter-Token', token)
       .header('Accept', 'application/json')
       .header('User-Agent', 'Active Faith Hubot')
       .get() (err, res, body) =>
-        issues = JSON.parse(body) 
-        next_page = issues.next_page_url
-        if issues.total_pages <= 1
-          for issue in issues.issues
-            @issues.push(new Issue(issue))
-          msg.send "#{@name}: #{@issues.length}"
+        data = JSON.parse(body)
+        total_pages = data.total_pages
+        if total_pages is 1
+          msg.send "#{@name}: #{data.issues.length}"
         else
-          for x in [1...issues.total_pages]
-            for issue in issues.issues
-              @issues.push(new Issue(issue))
-            msg.send "#{@name}: #{@issues.length}"
-
-
-
-class Issue
-  constructor: (issue) ->
-    @subject = issue.subject 
+          # Get the last page. Get the length of the issues.  Add 25 for each of the previous pages.
+          url = "#{@api_issues_url}&page=#{data.total_pages}&per_page=25"
+          msg.http(url)
+            .header('X-Sifter-Token', token)
+            .header('Accept', 'application/json')
+            .header('User-Agent', 'Active Faith Hubot')
+            .get() (err, res, body) =>
+              data = JSON.parse(body)
+              msg.send "#{@name}: #{data.issues.length + ((total_pages - 1) * 25)}"
