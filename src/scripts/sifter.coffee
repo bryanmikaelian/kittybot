@@ -1,9 +1,11 @@
 # Sifter API integration
 #
-# hubot give me a sifter report- Returns a summary of the open sifter tickets based on the projects.  Regex used so that people can say "give me a sifters report"
+# hubot give me a sifter report - Returns a summary of the open sifter tickets based on the projects.  Regex used so that people can say "give me a sifters report"
+#
+# hubot give me a milestone report - Returns a summary of the open sifter tickets for each milestone for each project
 #
 #
-#
+
 token = process.env.HUBOT_SIFTER_TOKEN
 company = process.env.HUBOT_SIFTER_COMPANY
 module.exports = (robot) ->
