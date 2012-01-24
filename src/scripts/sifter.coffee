@@ -47,8 +47,8 @@ module.exports = (robot) ->
             @project.get_all_milestone_issues(msg)
 
   # Sifter Polling - Active Network Faith specific 
-  setInterval -> 
-    http.create("https://#{company}.sifterapp.com/api/projects/")
+  robot.hear /(Jenkins says)/i, (msg) ->
+    msg.http("https://#{company}.sifterapp.com/api/projects/")
     .header('X-Sifter-Token', token)
     .header('Accept', 'application/json')
     .header('User-Agent', 'Active Faith Hubot')
@@ -56,9 +56,14 @@ module.exports = (robot) ->
       projects = JSON.parse(body).projects
       for project in projects
         do(project) ->
-          @project = new Project(project, robot)
-          @project.get_all_change_requests_qa(robot)  
-  , 3000
+          @project = new Project(project, msg)
+          @project.get_all_change_requests_qa(msg)
+
+  setInterval ->
+    users = robot.users
+    user = users[0].id
+    console.log user
+  , 5000
 
 class Project 
   constructor: (project, msg) ->
@@ -115,11 +120,11 @@ class Project
               @get_total_issues(msg, milestone, null) 
 
   # Active Network - Faith Specific
-  get_all_change_requests_qa: (robot) ->
+  get_all_change_requests_qa: (msg) ->
     category_number_regex = /https:\/\/activefaith.sifterapp.com\/projects\/[0-9]*\/issues\?/i
     category_disposition_regex = /(Dropped \| QA)+/i
     change_request_regex = /(Change Request)+(\-[A-Z]*)*( for Deployment of )+/i
-    http.create("#{@api_url}/categories")
+    msg.http("#{@api_url}/categories")
       .header('X-Sifter-Token', token)
       .header('Accept', 'application/json')
       .header('User-Agent', 'Active Faith Hubot')
@@ -127,7 +132,7 @@ class Project
         data = JSON.parse(body)
         for category in data.categories
           if category_disposition_regex.test category.name
-            http.create("#{category.api_issues_url}&s=1-2-3")
+            msg.http("#{category.api_issues_url}&s=1-2-3")
             .header('X-Sifter-Token', token)
             .header('Accept', 'application/json')
             .header('User-Agent', 'Active Faith Hubot')
@@ -138,4 +143,4 @@ class Project
                 client.sismember "qa_builds", build, (error, reply) ->
                   if reply is 0
                     client.sadd "qa_builds", build, (error, reply) ->
-                      robot.send robot.id, "#{build} has just been deployed to QA"
+                      msg.send "#{build} has just been deployed to QA"

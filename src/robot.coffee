@@ -93,16 +93,6 @@ class Robot
   leave: (callback) ->
     @listeners.push new Listener(@, ((msg) -> msg instanceof Robot.LeaveMessage), callback)
 
-
-
-  # Public: Adds a Listener that triggers when a timestamp occcurs
-  #
-  # callback - A Function that is called with a Response object.
-  #
-  # Returns nothing.
-  timestamp: (callback) ->
-    @listeners.push new Listener(@, ((msg) -> msg instanceof Robot.TimestampMessage), callback)
-
   # Public: Passes the given message to any interested Listeners.
   #
   # message - A Robot.Message instance. Listeners can flag this message as
