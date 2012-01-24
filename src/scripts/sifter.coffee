@@ -45,7 +45,7 @@ module.exports = (robot) ->
             @project = new Project(project, msg)
             @project.get_all_milestone_issues(msg)
 
-  robot.respond /qa/i (msg) ->
+  robot.respond /qa/i, (msg) ->
     msg.http("https://#{company}.sifterapp.com/api/projects/")
       .header('X-Sifter-Token', token)
       .header('Accept', 'application/json')
@@ -56,6 +56,9 @@ module.exports = (robot) ->
           do(project) ->
             @project = new Project(project, msg)
             @project.get_all_change_requests_qa(msg)
+
+  robot.router.get "/sifters/", (req, res) ->
+    res.end robot.version
 
 class Project 
   constructor: (project, msg) ->
