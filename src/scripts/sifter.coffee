@@ -45,10 +45,6 @@ module.exports = (robot) ->
             @project = new Project(project, msg)
             @project.get_all_milestone_issues(msg)
 
-  robot.timestamp (msg) ->
-    console.log "I heard a timestamp"
-
-
 class Project 
   constructor: (project, msg) ->
     @name = project.name
