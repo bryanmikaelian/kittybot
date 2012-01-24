@@ -138,4 +138,4 @@ class Project
                 client.sismember "qa_builds", build, (error, reply) ->
                   if reply is 0
                     client.sadd "qa_builds", build, (error, reply) ->
-                      robot.send "#{build} has just been deployed to QA"
+                      robot.send robot.id, "#{build} has just been deployed to QA"
