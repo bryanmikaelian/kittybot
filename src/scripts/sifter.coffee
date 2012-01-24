@@ -61,8 +61,7 @@ module.exports = (robot) ->
 
   setInterval ->
     users = robot.users
-    user = users[0].id
-    console.log user
+    console.log users[0]
   , 5000
 
 class Project 
