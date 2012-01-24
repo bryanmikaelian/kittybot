@@ -10,6 +10,7 @@ token = process.env.HUBOT_SIFTER_TOKEN || "cf5b2db69e7ec3019736f299e87f4a60"
 company = process.env.HUBOT_SIFTER_COMPANY || "activefaith"
 Url   = require "url"
 Redis = require "redis"
+http = require 'scoped-http-client'
 
 info   = Url.parse process.env.REDISTOGO_URL || 'redis://localhost:6379'
 client = Redis.createClient(info.port, info.hostname)
@@ -45,17 +46,19 @@ module.exports = (robot) ->
             @project = new Project(project, msg)
             @project.get_all_milestone_issues(msg)
 
-  robot.respond /qa/i, (msg) ->
-    msg.http("https://#{company}.sifterapp.com/api/projects/")
-      .header('X-Sifter-Token', token)
-      .header('Accept', 'application/json')
-      .header('User-Agent', 'Active Faith Hubot')
-      .get() (err, res, body) ->
-        projects = JSON.parse(body).projects
-        for project in projects
-          do(project) ->
-            @project = new Project(project, msg)
-            @project.get_all_change_requests_qa(msg)
+  # Sifter Polling - Active Network Faith specific 
+  setInterval -> 
+    http.create("https://#{company}.sifterapp.com/api/projects/")
+    .header('X-Sifter-Token', token)
+    .header('Accept', 'application/json')
+    .header('User-Agent', 'Active Faith Hubot')
+    .get() (err, res, body) ->
+      projects = JSON.parse(body).projects
+      for project in projects
+        do(project) ->
+          @project = new Project(project, robot)
+          @project.get_all_change_requests_qa(robot)  
+  , 3000
 
 class Project 
   constructor: (project, msg) ->
@@ -112,11 +115,11 @@ class Project
               @get_total_issues(msg, milestone, null) 
 
   # Active Network - Faith Specific
-  get_all_change_requests_qa: (msg) ->
+  get_all_change_requests_qa: (robot) ->
     category_number_regex = /https:\/\/activefaith.sifterapp.com\/projects\/[0-9]*\/issues\?/i
     category_disposition_regex = /(Dropped \| QA)+/i
     change_request_regex = /(Change Request)+(\-[A-Z]*)*( for Deployment of )+/i
-    msg.http("#{@api_url}/categories")
+    http.create("#{@api_url}/categories")
       .header('X-Sifter-Token', token)
       .header('Accept', 'application/json')
       .header('User-Agent', 'Active Faith Hubot')
@@ -124,7 +127,7 @@ class Project
         data = JSON.parse(body)
         for category in data.categories
           if category_disposition_regex.test category.name
-            msg.http("#{category.api_issues_url}&s=1-2-3")
+            http.create("#{category.api_issues_url}&s=1-2-3")
             .header('X-Sifter-Token', token)
             .header('Accept', 'application/json')
             .header('User-Agent', 'Active Faith Hubot')
@@ -135,5 +138,4 @@ class Project
                 client.sismember "qa_builds", build, (error, reply) ->
                   if reply is 0
                     client.sadd "qa_builds", build, (error, reply) ->
-                      msg.send "#{build} has just been deployed to QA"
- 
+                      robot.send "#{build} has just been deployed to QA"
