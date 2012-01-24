@@ -41,7 +41,6 @@ class Campfire extends Adapter
     bot.on "TextMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
         self.receive new Robot.TextMessage(author, body)
-        console.log(author)
 
     bot.on "EnterMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
@@ -50,9 +49,6 @@ class Campfire extends Adapter
     bot.on "LeaveMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
         self.receive new Robot.LeaveMessage(author)
-
-    bot.on "TimestampMessage", withAuthor (id, created, room, user, body, author) ->
-      console.log(author)
 
     bot.Me (err, data) ->
       bot.info = data.user

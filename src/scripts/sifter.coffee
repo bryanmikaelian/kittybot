@@ -45,7 +45,7 @@ module.exports = (robot) ->
             @project = new Project(project, msg)
             @project.get_all_milestone_issues(msg)
 
-  robot.timestamp (msg) ->
+  robot.respond /qa/i (msg) ->
     msg.http("https://#{company}.sifterapp.com/api/projects/")
       .header('X-Sifter-Token', token)
       .header('Accept', 'application/json')

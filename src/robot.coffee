@@ -357,8 +357,6 @@ class Robot.EnterMessage extends Robot.Message
 # user - A User instance for the user who left.
 class Robot.LeaveMessage extends Robot.Message
 
-class Robot.TimestampMessage extends Robot.Message
-
 class Listener
   # Listeners receive every message from the chat source and decide if they
   # want to act on it.
