@@ -59,11 +59,6 @@ module.exports = (robot) ->
           @project = new Project(project, msg)
           @project.get_all_change_requests_qa(msg)
 
-  setInterval ->
-    users = robot.users
-    console.log users[0]
-  , 5000
-
 class Project 
   constructor: (project, msg) ->
     @name = project.name
