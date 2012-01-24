@@ -45,9 +45,17 @@ module.exports = (robot) ->
             @project = new Project(project, msg)
             @project.get_all_milestone_issues(msg)
 
-  robot.timestamp (msg) ->
-    console.log "I heard a timestamp"
-
+  robot.timeout (msg) ->
+    msg.http("https://#{company}.sifterapp.com/api/projects/")
+      .header('X-Sifter-Token', token)
+      .header('Accept', 'application/json')
+      .header('User-Agent', 'Active Faith Hubot')
+      .get() (err, res, body) ->
+        projects = JSON.parse(body).projects
+        for project in projects
+          do(project) ->
+            @project = new Project(project, msg)
+            @project.get_all_change_requests_qa(msg)
 
 class Project 
   constructor: (project, msg) ->
@@ -104,7 +112,7 @@ class Project
               @get_total_issues(msg, milestone, null) 
 
   # Active Network - Faith Specific
-  poll_open_change_requests_qa: (msg) ->
+  get_all_change_requests_qa: (msg) ->
     category_number_regex = /https:\/\/activefaith.sifterapp.com\/projects\/[0-9]*\/issues\?/i
     category_disposition_regex = /(Dropped \| QA)+/i
     change_request_regex = /(Change Request)+(\-[A-Z]*)*( for Deployment of )+/i
@@ -128,5 +136,4 @@ class Project
                   if reply is 0
                     client.sadd "qa_builds", build, (error, reply) ->
                       msg.send "#{build} has just been deployed to QA"
-                  else
-                    msg.send "Build is already there."
+ 
