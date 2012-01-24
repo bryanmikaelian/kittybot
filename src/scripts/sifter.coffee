@@ -57,9 +57,6 @@ module.exports = (robot) ->
             @project = new Project(project, msg)
             @project.get_all_change_requests_qa(msg)
 
-  robot.router.get "/sifters/", (req, res) ->
-    res.end robot.version
-
 class Project 
   constructor: (project, msg) ->
     @name = project.name
