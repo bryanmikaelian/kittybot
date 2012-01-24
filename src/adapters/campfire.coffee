@@ -50,9 +50,8 @@ class Campfire extends Adapter
       unless bot.info.id == author.id
         self.receive new Robot.LeaveMessage(author)
 
-    bot.on "TimestampMessage", () ->
-      console.log "Timestamp"
-      self.receive new Robot.TimestampMessage(null)
+    bot.on "TimestampMessage", withAuthor (id, created, room, user, body, author) ->
+      self.receive new Robot.TimestampMessage(author)
 
     bot.Me (err, data) ->
       bot.info = data.user
