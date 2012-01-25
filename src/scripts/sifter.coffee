@@ -61,7 +61,7 @@ module.exports = (robot) ->
 
    robot.respond /(Message room)/i, (msg) ->
      console.log "Messaging room"
-     robot.messageRoom "foo", "Hello"
+     robot.messageRoom "Node", "Hello"
  
 
 class Project 
