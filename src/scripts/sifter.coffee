@@ -59,8 +59,9 @@ module.exports = (robot) ->
           @project = new Project(project, msg)
           @project.get_all_change_requests_qa(msg)
 
-   robot.respond /(message room)/i, (msg) ->
-     robot.messageRoom "Hi"
+   setInterval ->
+     console.log robot.room
+   , 1000
 
 class Project 
   constructor: (project, msg) ->
