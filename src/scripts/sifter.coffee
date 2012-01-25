@@ -59,7 +59,7 @@ module.exports = (robot) ->
           @project = new Project(project, msg)
           @project.get_all_change_requests_qa(msg)
 
-   robt.respond /(Message room)/i, (msg) ->
+   robot.respond /(Message room)/i, (msg) ->
      console.log "Messaging room"
      robot.messageRoom "Hello"
  
