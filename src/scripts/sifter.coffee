@@ -60,7 +60,7 @@ module.exports = (robot) ->
           @project.get_all_change_requests_qa(msg)
 
    setInterval ->
-     console.log robot
+     console.log robot.info
    , 1000
 
 class Project 
