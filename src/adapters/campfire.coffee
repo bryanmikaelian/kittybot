@@ -40,8 +40,8 @@ class Campfire extends Adapter
 
     withNoAuthor = (callback) -> (id, created, room, body) ->
         author = self.userForId(bot.info.id, bot.info)
-        self.robot.brain.data.users[userData.user.id].name = bot.info.name
-        self.robot.brain.data.users[userData.user.id].email_address = bot.info.email_address
+        self.robot.brain.data.users[bot.info.id].name = bot.info.name
+        self.robot.brain.data.users[bot.info.id].email_address = bot.info.email_address
         author.room = room
         callback id, created, room, user, body, author
 
