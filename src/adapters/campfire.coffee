@@ -62,8 +62,8 @@ class Campfire extends Adapter
 
     bot.on "SoundMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
-        console.log body
-        self.receive new Robot.SoundMessage(author)
+        if body is "rimshot"
+          self.receive new Robot.SoundMessage(author)
 
 
     bot.Me (err, data) ->

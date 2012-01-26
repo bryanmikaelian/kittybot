@@ -43,11 +43,9 @@ module.exports = (robot) ->
       msg.send "Total rimshots played: #{count}"
 
   robot.sound (msg) ->
-    console.log msg
-    if msg.body is "rimshot"
-      client.hincrby "counts", "rimshots", 1, (err, reply) ->
-        if err
-          throw err
-        else
-          msg.send msg.random rimshot_responses
+    client.hincrby "counts", "rimshots", 1, (err, reply) ->
+      if err
+        throw err
+      else
+        msg.send msg.random rimshot_responses
 
