@@ -46,7 +46,7 @@ module.exports = (robot) ->
             @project = new Project(project, msg)
             @project.get_all_milestone_issues(msg)
 
-  # Sifter Polling - Active Network Faith specific 
+  # Sifter Polling - Active Network Faith specific - QA Environment 
   robot.timestamp (msg) ->
     msg.http("https://#{company}.sifterapp.com/api/projects/")
     .header('X-Sifter-Token', token)
