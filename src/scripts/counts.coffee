@@ -43,6 +43,7 @@ module.exports = (robot) ->
       msg.send "Total rimshots played: #{count}"
 
   robot.sound (msg) ->
+    console.log msg
     if msg.body is "rimshot"
       client.hincrby "counts", "rimshots", 1, (err, reply) ->
         if err
