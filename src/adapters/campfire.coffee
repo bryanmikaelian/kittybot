@@ -42,8 +42,8 @@ class Campfire extends Adapter
       bot.Me (selfData) ->
         bot.User user, (err, selfdata) ->
           console.log selfdata
-          console.log selfdata.id
-          console.log selfdata.name
+          console.log selfdata.user.id
+          console.log selfdata.user.id
 
     bot.on "TextMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
@@ -56,8 +56,8 @@ class Campfire extends Adapter
     bot.on "LeaveMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
         self.receive new Robot.LeaveMessage(author)
-    
-    bot.on "SoundMessage", withSelf (id, created, room, user , author) ->
+
+    bot.on "TimestampMessage", withSelf (id, created, room, user, body, author) ->
       console.log "Timestamp"
       console.log author.id
       console.log author.room
