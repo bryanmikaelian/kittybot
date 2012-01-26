@@ -32,14 +32,17 @@ class Campfire extends Adapter
     withAuthor = (callback) -> (id, created, room, user, body) ->
       if user is null
         user = bot.Me
-
-      bot.User user, (err, userData) ->
-        if userData.user
-          author = self.userForId(userData.user.id, userData.user)
-          self.robot.brain.data.users[userData.user.id].name = userData.user.name
-          self.robot.brain.data.users[userData.user.id].email_address = userData.user.email_address
-          author.room = room
-          callback id, created, room, user, body, author
+        author = self.userForId(user.id)
+        author.room = room
+        callback id, created, room, user, body, author
+      else
+        bot.User user, (err, userData) ->
+          if userData.user
+            author = self.userForId(userData.user.id, userData.user)
+            self.robot.brain.data.users[userData.user.id].name = userData.user.name
+            self.robot.brain.data.users[userData.user.id].email_address = userData.user.email_address
+            author.room = room
+            callback id, created, room, user, body, author
 
     bot.on "TextMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
