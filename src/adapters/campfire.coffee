@@ -40,7 +40,7 @@ class Campfire extends Adapter
 
     withSelf = (callback) -> (id, created, room, user, body) ->
       bot.Me (selfData) ->
-        console.log selfdata
+        console.log selfData
 
     bot.on "TextMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
