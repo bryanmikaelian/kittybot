@@ -31,7 +31,7 @@ class Campfire extends Adapter
 
     withAuthor = (callback) -> (id, created, room, user, body) ->
       if user is null
-        console.log "Null user!"
+        user = bot.Me
 
       bot.User user, (err, userData) ->
         if userData.user
