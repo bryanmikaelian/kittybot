@@ -136,5 +136,6 @@ class Project
                 build = issue.subject.replace change_request_regex, ""
                 client.sismember "qa_builds", build, (error, reply) ->
                   if reply is 0
+                    console.log "Adding #{build} to qa_builds hash"
                     client.sadd "qa_builds", build, (error, reply) ->
                       msg.send "#{build} has just been deployed to QA"
