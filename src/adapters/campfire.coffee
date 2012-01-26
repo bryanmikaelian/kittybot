@@ -33,10 +33,7 @@ class Campfire extends Adapter
       if user is null
         bot.Me (userData) ->
           console.log "Callback using bot.Me"
-          author = self.userForId(userData.user.id, userData.user)
-          author.room = room
-          console.log author.room
-          callback id, created, room, user, body, author
+          console.log userData.id
       else
         bot.User user, (err, userData) ->
           if userData.user
