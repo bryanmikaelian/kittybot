@@ -93,6 +93,14 @@ class Robot
   leave: (callback) ->
     @listeners.push new Listener(@, ((msg) -> msg instanceof Robot.LeaveMessage), callback)
 
+  # Public: Adds a listener that triggers whenever a time stamp occurs
+  #
+  # callback - A Function that is called with a Response object.
+  #
+  # Returns nothing.
+  timestamp: (callback) ->
+    @listeners.push new Listener(@, ((msg) -> msg instanceof Robot.TimestampMessage), callback)
+
   # Public: Passes the given message to any interested Listeners.
   #
   # message - A Robot.Message instance. Listeners can flag this message as
@@ -346,6 +354,12 @@ class Robot.EnterMessage extends Robot.Message
 #
 # user - A User instance for the user who left.
 class Robot.LeaveMessage extends Robot.Message
+
+# Represents an incoming timestamp notification
+# 
+# user - A user instance representing the robot itself since timestamps
+#        are system generated
+class Robot.TimestampMessage extends Robot.Message
 
 class Listener
   # Listeners receive every message from the chat source and decide if they

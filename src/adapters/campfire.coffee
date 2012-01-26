@@ -58,9 +58,7 @@ class Campfire extends Adapter
         self.receive new Robot.LeaveMessage(author)
 
     bot.on "SoundMessage", withNoAuthor (id, created, room, body, author) ->
-      console.log "Timestamp"
-      console.log author.room
-      console.log author
+      self.receive new Robot.TimestampMessage(author)
 
     bot.Me (err, data) ->
       bot.info = data.user

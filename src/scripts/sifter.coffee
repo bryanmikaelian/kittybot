@@ -59,6 +59,9 @@ module.exports = (robot) ->
           @project = new Project(project, msg)
           @project.get_all_change_requests_qa(msg)
 
+  robot.timestamp (msg) ->
+    msg.send "Who played that sound?"
+
 class Project 
   constructor: (project, msg) ->
     @name = project.name
