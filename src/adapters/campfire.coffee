@@ -43,7 +43,7 @@ class Campfire extends Adapter
         self.robot.brain.data.users[bot.info.id].name = bot.info.name
         self.robot.brain.data.users[bot.info.id].email_address = bot.info.email_address
         author.room = room
-        callback id, created, room, user, body, author
+        callback id, created, room, body, author
 
     bot.on "TextMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
