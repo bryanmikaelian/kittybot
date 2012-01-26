@@ -38,9 +38,12 @@ class Campfire extends Adapter
             author.room = room
             callback id, created, room, user, body, author
 
-    withSelf = (callback) -> (id, created, room, user, body) ->
-        console.log bot.info.id
-        console.log bot.info
+    withNoAuthor = (callback) -> (id, created, room, body) ->
+        author = self.userForId(bot.info.id, bot.info)
+        self.robot.brain.data.users[userData.user.id].name = bot.info.name
+        self.robot.brain.data.users[userData.user.id].email_address = bot.info.email_address
+        author.room = room
+        callback id, created, room, user, body, author
 
     bot.on "TextMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
@@ -54,8 +57,10 @@ class Campfire extends Adapter
       unless bot.info.id == author.id
         self.receive new Robot.LeaveMessage(author)
 
-    bot.on "SoundMessage", withSelf (id, created, room, user, body, author) ->
+    bot.on "SoundMessage", withNoAuthor (id, created, room, body, author) ->
       console.log "Timestamp"
+      console.log author.room
+      console.log author
 
     bot.Me (err, data) ->
       bot.info = data.user
