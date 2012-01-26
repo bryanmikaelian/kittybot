@@ -31,11 +31,12 @@ class Campfire extends Adapter
 
     withAuthor = (callback) -> (id, created, room, user, body) ->
       if user is null
-        user = bot.Me
-        console.log user.id
-        author = self.userForId(user.id, user)
-        author.room = room
-        callback id, created, room, user, body, author
+        bot.Me (userData) ->
+          console.log "Callback using bot.Me"
+          author = self.userForId(userData.user.id, userData.user)
+          author.room = room
+          console.log author.room
+          callback id, created, room, user, body, author
       else
         bot.User user, (err, userData) ->
           if userData.user
