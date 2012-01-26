@@ -30,12 +30,8 @@ class Campfire extends Adapter
     bot = new CampfireStreaming(options, @robot)
 
     withAuthor = (callback) -> (id, created, room, user, body) ->
-      if user is null
-        bot.Me (userData) ->
-          console.log userData.user.id
-          console.log "Callback using bot.Me"
-      else
         bot.User user, (err, userData) ->
+          console.log user
           if userData.user
             author = self.userForId(userData.user.id, userData.user)
             self.robot.brain.data.users[userData.user.id].name = userData.user.name
