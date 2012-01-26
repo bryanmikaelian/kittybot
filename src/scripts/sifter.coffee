@@ -59,6 +59,8 @@ module.exports = (robot) ->
           @project = new Project(project, msg)
           @project.get_all_change_requests_qa(msg)
           @project.get_all_change_requests_staging(msg)
+          if project.name is "Faith | IRV | Fellowship One"
+            @project.get_all_issues_for_f1(msg)
 
 class Project 
   constructor: (project, msg) ->
@@ -167,3 +169,18 @@ class Project
                     console.log "Adding #{build} to staging_builds hash"
                     client.sadd "staging_builds", build, (error, reply) ->
                       msg.send "#{build} has just been deployed to Staging"
+
+  get_all_issues_for_f1: (msg) ->
+    msg.http("#{@api_issues_url}?s=1-2-3")
+      .header('X-Sifter-Token', token)
+      .header('Accept', 'application/json')
+      .header('User-Agent', 'Active Faith Hubot')
+      .get() (err, res, body) =>
+        data = JSON.parse(body)
+        for issue in data.issues
+          do (issue) ->
+            client.sismember "open_issues", issue.number, (error, reply) ->
+              if reply is 0
+                console.log "Adding #{issue.number} to the open issues set"
+                client.sadd "open_issues", issue.number, (error, reply) ->
+                  msg.send "#{issue.opener_name} has opened Sifter ##{issue.number}: #{issue.subject}"
