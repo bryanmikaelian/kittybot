@@ -32,7 +32,8 @@ class Campfire extends Adapter
     withAuthor = (callback) -> (id, created, room, user, body) ->
       if user is null
         user = bot.Me
-        author = self.userForId(user.id)
+        console.log user.id
+        author = self.userForId(user.id, user)
         author.room = room
         callback id, created, room, user, body, author
       else
@@ -58,7 +59,8 @@ class Campfire extends Adapter
     
     bot.on "TimestampMessage", withAuthor (id, created, room, user , author) ->
       console.log "Timestamp"
-      console.log author
+      console.log author.id
+      console.log author.room
 
     bot.Me (err, data) ->
       bot.info = data.user
