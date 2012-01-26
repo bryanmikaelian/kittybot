@@ -58,6 +58,7 @@ module.exports = (robot) ->
         do(project) ->
           @project = new Project(project, msg)
           @project.get_all_change_requests_qa(msg)
+          @project.get_all_change_requests_staging(msg)
 
 class Project 
   constructor: (project, msg) ->
@@ -139,3 +140,30 @@ class Project
                     console.log "Adding #{build} to qa_builds hash"
                     client.sadd "qa_builds", build, (error, reply) ->
                       msg.send "#{build} has just been deployed to QA"
+
+  # Active Network - Faith Specific
+  get_all_change_requests_staging: (msg) ->
+    category_number_regex = /https:\/\/activefaith.sifterapp.com\/projects\/[0-9]*\/issues\?/i
+    category_disposition_regex = /(Dropped \| Staging)+/i
+    change_request_regex = /(Change Request)+(\-[A-Z]*)*( for Deployment of )+/i
+    msg.http("#{@api_url}/categories")
+      .header('X-Sifter-Token', token)
+      .header('Accept', 'application/json')
+      .header('User-Agent', 'Active Faith Hubot')
+      .get() (err, res, body) =>
+        data = JSON.parse(body)
+        for category in data.categories
+          if category_disposition_regex.test category.name
+            msg.http("#{category.api_issues_url}&s=1-2-3")
+            .header('X-Sifter-Token', token)
+            .header('Accept', 'application/json')
+            .header('User-Agent', 'Active Faith Hubot')
+            .get() (err, res, body) =>
+              data = JSON.parse(body)
+              for issue in data.issues
+                build = issue.subject.replace change_request_regex, ""
+                client.sismember "staging_builds", build, (error, reply) ->
+                  if reply is 0
+                    console.log "Adding #{build} to staging_builds hash"
+                    client.sadd "staging_builds", build, (error, reply) ->
+                      msg.send "#{build} has just been deployed to Staging"
