@@ -47,7 +47,7 @@ module.exports = (robot) ->
             @project.get_all_milestone_issues(msg)
 
   # Sifter Polling - Active Network Faith specific 
-  robot.hear /(Jenkins says)/i, (msg) ->
+  robot.timestamp (msg) ->
     msg.http("https://#{company}.sifterapp.com/api/projects/")
     .header('X-Sifter-Token', token)
     .header('Accept', 'application/json')
@@ -58,9 +58,6 @@ module.exports = (robot) ->
         do(project) ->
           @project = new Project(project, msg)
           @project.get_all_change_requests_qa(msg)
-
-  robot.timestamp (msg) ->
-    msg.send "Who played that sound?"
 
 class Project 
   constructor: (project, msg) ->
