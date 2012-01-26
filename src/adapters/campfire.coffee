@@ -30,6 +30,9 @@ class Campfire extends Adapter
     bot = new CampfireStreaming(options, @robot)
 
     withAuthor = (callback) -> (id, created, room, user, body) ->
+      if user is null
+        console.log "Null user!"
+
       bot.User user, (err, userData) ->
         if userData.user
           author = self.userForId(userData.user.id, userData.user)
@@ -49,6 +52,10 @@ class Campfire extends Adapter
     bot.on "LeaveMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
         self.receive new Robot.LeaveMessage(author)
+    
+    bot.on "TimestampMessage", withAuthor (id, created, room, user , author) ->
+      console.log "Timestamp"
+      console.log author
 
     bot.Me (err, data) ->
       bot.info = data.user
