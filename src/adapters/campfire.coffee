@@ -37,13 +37,11 @@ class Campfire extends Adapter
             self.robot.brain.data.users[userData.user.id].email_address = userData.user.email_address
             author.room = room
             callback id, created, room, user, body, author
-    
+
     withSelf = (callback) -> (id, created, room, user, body) ->
       bot.Me (selfData) ->
         bot.User user, (err, selfdata) ->
           console.log selfdata
-          console.log selfdata.user.id
-          console.log selfdata.user.id
 
     bot.on "TextMessage", withAuthor (id, created, room, user, body, author) ->
       unless bot.info.id == author.id
