@@ -60,6 +60,11 @@ class Campfire extends Adapter
     bot.on "TimestampMessage", withNoAuthor (id, created, room, body, author) ->
       self.receive new Robot.TimestampMessage(author)
 
+    bot.on "SoundMessage", withAuthor (id, created, room, user, body, author) ->
+      unless bot.info.id == author.id
+        self.receive new Robot.SoundMessage(author)
+
+
     bot.Me (err, data) ->
       bot.info = data.user
       bot.name = bot.info.name

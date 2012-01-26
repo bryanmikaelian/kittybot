@@ -101,6 +101,10 @@ class Robot
   timestamp: (callback) ->
     @listeners.push new Listener(@, ((msg) -> msg instanceof Robot.TimestampMessage), callback)
 
+  sound: (callback) ->
+    @listeners.push new Listener(@, ((msg) -> msg instanceof Robot.SoundMessage), callback)
+
+
   # Public: Passes the given message to any interested Listeners.
   #
   # message - A Robot.Message instance. Listeners can flag this message as
@@ -360,6 +364,8 @@ class Robot.LeaveMessage extends Robot.Message
 # user - A user instance representing the robot itself since timestamps
 #        are system generated
 class Robot.TimestampMessage extends Robot.Message
+
+class Robot.SoundMessage extends Robot.Message
 
 class Listener
   # Listeners receive every message from the chat source and decide if they
