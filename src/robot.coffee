@@ -101,8 +101,13 @@ class Robot
   timestamp: (callback) ->
     @listeners.push new Listener(@, ((msg) -> msg instanceof Robot.TimestampMessage), callback)
 
-  sound: (callback) ->
-    @listeners.push new Listener(@, ((msg) -> msg instanceof Robot.SoundMessage), callback)
+  # Public: Adds a listener that triggers whenever a rimshot is played
+  #
+  # callback - A Function that is called with a Response object.
+  #
+  # Returns nothing.
+  rimshot: (callback) ->
+    @listeners.push new Listener(@, ((msg) -> msg instanceof Robot.Rimshot), callback)
 
 
   # Public: Passes the given message to any interested Listeners.
@@ -365,7 +370,15 @@ class Robot.LeaveMessage extends Robot.Message
 #        are system generated
 class Robot.TimestampMessage extends Robot.Message
 
+# Represents an incoming rimshot sound message
+# 
+# user - A User instance for the user who played the sound
 class Robot.SoundMessage extends Robot.Message
+
+# Represents an incoming rimshot sound message
+# 
+# user - A User instance for the user who played the rimshot
+class Robot.Rimshot extends Robot.SoundMessage
 
 class Listener
   # Listeners receive every message from the chat source and decide if they
