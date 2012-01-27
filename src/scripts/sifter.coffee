@@ -128,20 +128,22 @@ class Project
       .get() (err, res, body) =>
         data = JSON.parse(body)
         for category in data.categories
-          if category_disposition_regex.test category.name
-            msg.http("#{category.api_issues_url}&s=1-2-3")
-            .header('X-Sifter-Token', token)
-            .header('Accept', 'application/json')
-            .header('User-Agent', 'Active Faith Hubot')
-            .get() (err, res, body) =>
-              data = JSON.parse(body)
-              for issue in data.issues
-                build = issue.subject.replace change_request_regex, ""
-                client.sismember "qa_builds", build, (error, reply) ->
-                  if reply is 0
-                    console.log "Adding #{build} to qa_builds hash"
-                    client.sadd "qa_builds", build, (error, reply) ->
-                      msg.send "#{build} has just been deployed to QA"
+          do(category) ->
+            if category_disposition_regex.test category.name
+              msg.http("#{category.api_issues_url}&s=1-2-3")
+              .header('X-Sifter-Token', token)
+              .header('Accept', 'application/json')
+              .header('User-Agent', 'Active Faith Hubot')
+              .get() (err, res, body) =>
+                data = JSON.parse(body)
+                for issue in data.issues
+                  do(issue) ->
+                    build = issue.subject.replace change_request_regex, ""
+                    client.sismember "qa_builds", build, (error, reply) ->
+                      if reply is 0
+                        console.log "Adding #{build} to qa_builds hash"
+                        client.sadd "qa_builds", build, (error, reply) ->
+                          msg.send "#{build} has just been deployed to QA"
 
   # Active Network - Faith Specific
   get_all_change_requests_staging: (msg) ->
@@ -155,20 +157,22 @@ class Project
       .get() (err, res, body) =>
         data = JSON.parse(body)
         for category in data.categories
-          if category_disposition_regex.test category.name
-            msg.http("#{category.api_issues_url}&s=1-2-3")
-            .header('X-Sifter-Token', token)
-            .header('Accept', 'application/json')
-            .header('User-Agent', 'Active Faith Hubot')
-            .get() (err, res, body) =>
-              data = JSON.parse(body)
-              for issue in data.issues
-                build = issue.subject.replace change_request_regex, ""
-                client.sismember "staging_builds", build, (error, reply) ->
-                  if reply is 0
-                    console.log "Adding #{build} to staging_builds hash"
-                    client.sadd "staging_builds", build, (error, reply) ->
-                      msg.send "#{build} has just been deployed to Staging"
+          do(category) ->
+            if category_disposition_regex.test category.name
+              msg.http("#{category.api_issues_url}&s=1-2-3")
+              .header('X-Sifter-Token', token)
+              .header('Accept', 'application/json')
+              .header('User-Agent', 'Active Faith Hubot')
+              .get() (err, res, body) =>
+                data = JSON.parse(body)
+                for issue in data.issues
+                  do(issue) ->
+                    build = issue.subject.replace change_request_regex, ""
+                    client.sismember "staging_builds", build, (error, reply) ->
+                      if reply is 0
+                        console.log "Adding #{build} to staging_builds hash"
+                        client.sadd "staging_builds", build, (error, reply) ->
+                          msg.send "#{build} has just been deployed to Staging"
 
   get_all_issues_for_f1: (msg) ->
     msg.http("#{@api_issues_url}?s=1-2-3")
