@@ -6,8 +6,8 @@
 #
 #
 
-token = process.env.HUBOT_SIFTER_TOKEN || "cf5b2db69e7ec3019736f299e87f4a60"
-company = process.env.HUBOT_SIFTER_COMPANY || "activefaith"
+token = process.env.HUBOT_SIFTER_TOKEN
+company = process.env.HUBOT_SIFTER_COMPANY
 Url   = require "url"
 Redis = require "redis"
 http = require 'scoped-http-client'
