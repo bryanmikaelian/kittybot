@@ -18,3 +18,9 @@ module.exports = (robot) ->
         console.log err
       else
         msg.send "#{msg.message.user.name}, I have added your phone number to the rolodex."
+
+  robot.respond /(get contact info for )+([a-zA-Z])+\ ?([a-zA-Z])+/i, (msg) ->
+    name = msg.message.text.replace /(get contact info for )+/i, ""
+    name = name.replace robot.name, ""
+    msg.send name
+    msg.send "Getting the info"
