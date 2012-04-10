@@ -119,7 +119,7 @@ class Project
   # Active Network - Faith Specific
   get_all_change_requests_qa: (msg) ->
     category_number_regex = /https:\/\/activefaith.sifterapp.com\/projects\/[0-9]*\/issues\?/i
-    category_disposition_regex = /(Dropped \| QA)+/i
+    category_disposition_regex = /(Dropped \| Integration)+/i
     change_request_regex = /(Change Request)+(\-[A-Z]*)*( for Deployment of )+/i
     msg.http("#{@api_url}/categories")
       .header('X-Sifter-Token', token)
@@ -143,7 +143,7 @@ class Project
                       if reply is 0
                         console.log "Adding #{build} to qa_builds hash"
                         client.sadd "qa_builds", build, (error, reply) ->
-                          msg.send "#{build} has just been deployed to QA"
+                          msg.send "#{build} has just been deployed to Integration"
 
   # Active Network - Faith Specific
   get_all_change_requests_staging: (msg) ->
